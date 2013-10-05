@@ -1,6 +1,34 @@
+/*
+Provided by IBEX UK LTD http://www.ibexuk.com
+Electronic Product Design Specialists
+RELEASED SOFTWARE
+
+The MIT License (MIT)
+
+Copyright (c) 2013, IBEX UK Ltd, http://ibexuk.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+//Project Name:		Raspberry Pi - PiFace Expansion Board Driver
 
 
-#include "main.h"
+
+#include "main.h"					//Global data type definitions (see https://github.com/ibexuk/C_Generic_Header_File )
 #define PIFACE_C
 #include "piface.h"
 
@@ -106,8 +134,8 @@ void PifaceOpenSpiPort (void)
     piface_write_register(PIFACE_GPIOA, 0x00);	//Initialise all outputs to 0
     piface_write_register(PIFACE_GPIOB, 0x00);	//Initialise all outputs to 0
     piface_write_register(PIFACE_IODIRA, 0);	//Set port A as outputs
-    piface_write_register(PIFACE_IODIRB, 0x0F);	//Set port B as outputs:inputs		<<<CHANGED TO SET PINS AS OUTPUTS Was 0xFF for all inputs
-    piface_write_register(PIFACE_GPPUB, 0x0F);	//Turn on port B pullups			<<<CHANGED TO SET PINS AS OUTPUTS Was 0xFF for all inputs
+    piface_write_register(PIFACE_IODIRB, 0x0F);	//Set port B as outputs:inputs		<<<SET WHICH PINS TO BE USED AS OUTPUTS.  0xFF = all inputs.  Set bit low for output.<<<<<<<<<<<<<<<<
+    piface_write_register(PIFACE_GPPUB, 0x0F);	//Turn on port B pullups			<<<SET WHICH PINS TO BE USED AS OUTPUTS.  0xFF = all inputs  Set bit low for output. <<<<<<<<<<<<<<<<
 
 
     return;
@@ -182,18 +210,16 @@ void piface_write_register (BYTE address, BYTE value)
 
 
 
-//***************************************************************************************************
-//***************************************************************************************************
-//********** PIFACE WRITE ONE OR MORE SEQUENTIAL BYTES TO THE INPUT PINS SETUP AS OUTPUTS ***********
-//***************************************************************************************************
-//***************************************************************************************************
+//*******************************************************************************
+//*******************************************************************************
+//********** PIFACE WRITE ONE OR MORE SEQUENTIAL BYTES TO THE OUTPUTS ***********
+//*******************************************************************************
+//*******************************************************************************
 //This fucntion uses an array allowing you to pass sequential bytes to the pins replicating a serial bus if you want to.
 //If not call with an array of 1 byte and length=1
-int piface_write_sequential_bytes_to_input_pins (unsigned char *data, int length)
+//port = PIFACE_GPIOA or PIFACE_GPIOB (if using pins as outputs)
+int piface_write_sequential_bytes_to_ouputs (unsigned char port, unsigned char *data, int length)
 {
-    //BYTE data_buffer[] = {PIFACE_CMD_WRITE, PIFACE_GPIOB, value};
-    //SpiWriteAndRead(PIFACE_SPI_DEVICE, data_buffer, 3);
-    
 	length += 2;	//Add the command and address bytes to the length
     
     
@@ -202,7 +228,7 @@ int piface_write_sequential_bytes_to_input_pins (unsigned char *data, int length
 	int data_index;
 	int retVal = -1;
     int *spi_cs_fd;
-    unsigned char data_command_address[2] = {PIFACE_CMD_WRITE, PIFACE_GPIOB};
+    unsigned char data_command_address[2] = {PIFACE_CMD_WRITE, port};
     
 
     if (PIFACE_SPI_DEVICE)
