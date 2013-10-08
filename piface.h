@@ -139,7 +139,7 @@ void PifaceOpenSpiPort (void);
 void PifaceCloseSpiPort (void);
 void piface_set_outputs (void);
 void piface_read_inputs (void);
-int piface_write_sequential_bytes_to_input_pins (unsigned char *data, int length);
+int piface_write_sequential_bytes_to_ouputs (unsigned char port, unsigned char *data, int length);
 
 
 #else
@@ -150,7 +150,7 @@ extern void PifaceOpenSpiPort (void);
 extern void PifaceCloseSpiPort (void);
 extern void piface_set_outputs (void);
 extern void piface_read_inputs (void);
-extern int piface_write_sequential_bytes_to_input_pins (unsigned char *data, int length);
+extern int piface_write_sequential_bytes_to_ouputs (unsigned char port, unsigned char *data, int length);
 
 
 
